@@ -1,6 +1,8 @@
-version: '3'
+ersion: '3.4'
 services:
   mvn:
     build: mvn_dock_f
     volumes:
-      - ./web_app:/tmp/webapps
+      - type: bind
+        source: ./webapps
+        target: /tmp/webapps
