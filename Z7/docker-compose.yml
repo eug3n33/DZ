@@ -3,4 +3,8 @@ services:
   mvn:
     build: mvn_dock_f
     volumes:
-      - ./web_app:/tmp/webapps
+      - type: volume
+        soure: webapps
+        target: /tmp/webapps
+volumes:
+  webapps: ./webapps
