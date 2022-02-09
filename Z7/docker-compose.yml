@@ -1,9 +1,10 @@
-version: '3'
+version: "3"
 services:
   mvn:
     build: mvn_dock_f
     volumes:
-      - type: bind
-        source: ./webapps
+      - type: volume
+        sourсe: webapps
         target: /tmp/webapps
-
+volumes:
+  webapps:
