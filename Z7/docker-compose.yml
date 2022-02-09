@@ -7,4 +7,4 @@ services:
         soure: webapps
         target: /tmp/webapps
 volumes:
-  webapps: ./webapps
+  webapps:
