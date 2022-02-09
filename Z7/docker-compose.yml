@@ -3,8 +3,7 @@ services:
   mvn:
     build: mvn_dock_f
     volumes:
-      - type: volume
-        soure: webapps
+      - type: bind
+        source: ./webapps
         target: /tmp/webapps
-volumes:
-  webapps:
+
