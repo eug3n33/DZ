@@ -4,7 +4,7 @@ services:
     build: mvn_dock_f
     volumes:
       - type: volume
-        sourсe: webapps
+        source: webapps
         target: /tmp/webapps
 volumes:
   webapps:
