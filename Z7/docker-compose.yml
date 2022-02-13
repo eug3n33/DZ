@@ -5,6 +5,6 @@ services:
     volumes:
       - type: volume
         source: webapps
-        target: /tmp/webapps
+        target: /tmp/webapps/
 volumes:
   webapps:
