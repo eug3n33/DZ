@@ -18,3 +18,15 @@
         git clone https://github.com/boxfuse/boxfuse-sample-java-war-hello.git
         cd /tmp/boxfuse-sample-java-war-hello/
         mvn package -f /tmp/boxfuse-sample-java-war-hello
+- name: install tomcat9
+  host: web
+  bexome: yes
+
+  tasks:
+    - name: Ensure git is present
+      apt:
+        name: tomcat9
+        state: present
+    - name: Ensure tomcat star
+      service:
+        name:
