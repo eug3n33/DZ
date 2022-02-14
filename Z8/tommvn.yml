@@ -24,7 +24,7 @@
 
 - name: install tomcat9
   host: web
-  bexome: yes
+  become: yes
 
   tasks:
     - name: Ensure java
