@@ -8,25 +8,32 @@
       apt:
         name: git
         state: present
+
     - name: Ensure git is present
       apt:
         name: mvn
         state: present
+
     - name: build
       shell: |
         cd /tmp/
         git clone https://github.com/boxfuse/boxfuse-sample-java-war-hello.git
         cd /tmp/boxfuse-sample-java-war-hello/
         mvn package -f /tmp/boxfuse-sample-java-war-hello
+
 - name: install tomcat9
   host: web
   bexome: yes
 
   tasks:
-    - name: Ensure git is present
+    - name: Ensure java
+      apt: default-jdk
+      state: present
+
+    - name: Ensure tomcat9 is present
       apt:
         name: tomcat9
         state: present
+
     - name: Ensure tomcat star
-      service:
-        name:
+      shell: /opt/tomcat/bin/startup.sh
