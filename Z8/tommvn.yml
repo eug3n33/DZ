@@ -1,0 +1,20 @@
+---
+- name: install mvn
+  hosts: mvn
+  become: yes
+
+  tasks:
+    - name: Ensure git is present
+      apt:
+        name: git
+        state: present
+    - name: Ensure git is present
+      apt:
+        name: mvn
+        state: present
+    - name: build
+      shell: |
+        cd /tmp/
+        git clone https://github.com/boxfuse/boxfuse-sample-java-war-hello.git
+        cd /tmp/boxfuse-sample-java-war-hello/
+        mvn package -f /tmp/boxfuse-sample-java-war-hello
