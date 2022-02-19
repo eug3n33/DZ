@@ -43,6 +43,9 @@
 
 - hosts: web
   tasks:
-   - name: Copy Remote-To-Remote (from serverA to serverB)
-     synchronize: src=/tmp/boxfuse-sample-java-war-hello/target/hello-1.0.war dest=/var/lib/tomcat9/webapps
-     delegate_to: 51.250.6.86
+    - name: Transfer file from mvn to web
+      synchronize:
+        src: /tmp/boxfuse-sample-java-war-hello/target/hello-1.0.war
+        dest: /var/lib/tomcat9/webapps
+        mode: pull
+      delegate_to: 51.250.6.86 #web
