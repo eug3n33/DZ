@@ -41,12 +41,12 @@
        name: tomcat9
        state: started
 
-- hosts: mvn
+- hosts: 51.250.6.86
   tasks:
     - name: Transfer file from mvn to web
       become_user: root
       synchronize:
         src: /tmp/boxfuse-sample-java-war-hello/target/hello-1.0.war
-        dest: /var/lib/tomcat9/webapps
+        dest: /tmp
         mode: pull
-      delegate_to: 62.84.113.8 #web
+      delegate_to: 62.84.114.44 #web
