@@ -5,3 +5,11 @@
   with_items:
     - git
     - maven
+
+- name: Read-write git checkout from github
+      ansible.builtin.git:
+        repo: https://github.com/boxfuse/boxfuse-sample-java-war-hello.git
+        dest: /tmp/boxfuse-sample-java-war-hello
+
+- name: build
+  shell: mvn package -f /tmp/boxfuse-sample-java-war-hello
