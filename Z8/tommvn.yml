@@ -48,4 +48,5 @@
         src: /tmp/boxfuse-sample-java-war-hello/target/hello-1.0.war
         dest: /var/lib/tomcat9/webapps
         mode: pull
+        become_user: root
       delegate_to: 62.84.113.8 #web
