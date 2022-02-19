@@ -3,7 +3,8 @@
 - name: install packages web
   apt: name={{ item }} state=present
   with_items:
-       - mc
+       - default-jdk
+       - tomcat9
 
 - name: Ensure tomcat star
   service:
