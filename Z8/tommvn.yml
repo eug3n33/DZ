@@ -41,11 +41,11 @@
        name: tomcat9
        state: started
 
-- name: copy mvn web
-  hosts: mvn
-  become: yes
-
+- hosts: mvn
   tasks:
-    - name: build
-      shell: rsync /tmp/boxfuse-sample-java-war-hello/target/hello-1.0.war root@62.84.113.8 /var/lib/tomcat9/webapps
-
+    - name: Transfer file from mvn to web
+      become_user: root
+      synchronize:
+        src: /tmp/boxfuse-sample-java-war-hello/target/hello-1.0.war
+        dest: /tmp
+      delegate_to: 62.84.114.44 #web
