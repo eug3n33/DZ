@@ -7,6 +7,6 @@
     - tomcat9
 
 - name: Ensure tomcat star
-      service:
-       name: tomcat9
-       state: started
+  service:
+   name: tomcat9
+   state: started
