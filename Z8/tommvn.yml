@@ -36,6 +36,10 @@
       apt:
        name: tomcat9
        state: present
+    - name: Ensure tomcat star
+      service:
+       name: tomcat9
+       state: started
 
 - hosts: mvn
   tasks:
