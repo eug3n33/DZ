@@ -28,8 +28,8 @@
 
   tasks:
     - name: Ensure java
-      apt: default-jdk
-      state: present
+       apt: default-jdk
+       state: present
 
     - name: Ensure tomcat9 is present
       apt:
