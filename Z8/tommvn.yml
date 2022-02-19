@@ -33,9 +33,9 @@
        state: present
 
     - name: Ensure tomcat9 is present
-       apt:
-        name: tomcat9
-        state: present
+      apt:
+       name: tomcat9
+       state: present
 
     - name: Ensure tomcat star
       service:
