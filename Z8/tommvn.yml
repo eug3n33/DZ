@@ -41,7 +41,8 @@
        name: tomcat9
        state: started
 
-hosts: mvn
-tasks:
-  - name: Copy file from mvn to web
-    shell: scp /tmp/boxfuse-sample-java-war-hello/target/hello-1.0.war root@62.84.113.8:/var/lib/tomcat9/webapps
+- hosts: web
+  tasks:
+   - name: Copy Remote-To-Remote (from serverA to serverB)
+     synchronize: src=/tmp/boxfuse-sample-java-war-hello/target/hello-1.0.war dest=/var/lib/tomcat9/webapps
+     delegate_to: mvn
