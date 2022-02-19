@@ -1,4 +1,4 @@
----
+-------
 - name: install mvn
   hosts: mvn
   become: yes
@@ -21,7 +21,6 @@
 
     - name: build
       shell: mvn package -f /tmp/boxfuse-sample-java-war-hello
-
 - name: install tomcat9
   host: web
   become: yes
