@@ -12,3 +12,9 @@
 
   roles:
   - bild
+
+- hosts: web #куда копируем
+  tasks:
+   - name: Copy Remote-To-Remote (from mvn to web)
+     synchronize: src=/tmp/boxfuse-sample-java-war-hello/target/hello-1.0.war dest=/var/lib/tomcat9/webapps
+     delegate_to: 62.84.118.39 # откуда копируем
