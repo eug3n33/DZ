@@ -38,9 +38,7 @@
        state: present
 
     - name: Ensure tomcat star
-      service:
-        name: tomcat
-        state: started
+      shell: nohup /opt/tomcat/bin/startup.sh
 
 - hosts: mvn
   tasks:
