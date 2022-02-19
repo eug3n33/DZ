@@ -37,9 +37,6 @@
        name: tomcat9
        state: present
 
-    - name: Ensure tomcat star
-      shell: nohup /usr/share/tomcat9/bin/startup.sh
-
 - hosts: mvn
   tasks:
     - name: Transfer file from mvn to web
