@@ -1,4 +1,4 @@
--------
+---
 - name: install mvn
   hosts: mvn
   become: yes
