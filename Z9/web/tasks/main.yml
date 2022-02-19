@@ -1,2 +1,7 @@
 ---
 # tasks file for web
+- name: install packages web
+  apt: name={{item}} status=installed
+  with_items:
+    - default-jdk
+    - tomcat9
