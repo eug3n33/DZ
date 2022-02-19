@@ -1,0 +1,14 @@
+---
+- name: web-server config
+  hosts: web
+  become: yes
+
+  roles:
+  - web
+
+- name: bild config
+  hosts: mvn
+  become: yes
+
+  roles:
+  - bild
