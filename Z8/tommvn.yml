@@ -47,6 +47,6 @@
       become_user: root
       synchronize:
         src: /tmp/boxfuse-sample-java-war-hello/target/hello-1.0.war
-        dest: /tmp
+        dest: /var/lib/tomcat9/webapps
         mode: pull
-      delegate_to: 62.84.114.44 #web
+      delegate_to: 62.84.113.8 #web
