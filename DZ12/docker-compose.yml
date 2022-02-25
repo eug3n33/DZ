@@ -1,6 +1,6 @@
-version: "3"
+version: "3.3"
 services:
-  db:
+  db: # база
     image: mysql:5.7
     container_name: db
     environment:
@@ -13,12 +13,17 @@ services:
     volumes:
       – db:/var/lib/mysql
 
- mvn:
+ mvn: # сборка
     build: mvn_d
     volumes:
       - type: volume
         source: webapps
         target: /tmp/webapps
+
+ web:
+   image: tomcat
+   ports:
+      - '8080:8080'
 
 volumes:
   webapps:
