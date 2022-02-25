@@ -1,0 +1,16 @@
+version: "3"
+services:
+  db:
+    image: mysql:5.7
+    container_name: db
+    environment:
+      MYSQL_ROOT_PASSWORD: QQww1122
+      MYSQL_DATABASE: test1
+      MYSQL_USER: test1
+      MYSQL_PASSWORD: QQww1122
+    ports:
+      – '8514:8514'
+    volumes:
+      – dbdata:/var/lib/mysql
+volumes:
+  dbdata:
