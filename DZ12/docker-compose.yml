@@ -9,8 +9,8 @@ services:
       MYSQL_USER: test1
       MYSQL_PASSWORD: QQww1122
     ports:
-      – '8514:8514'
+      – "8514:8514"
     volumes:
-      – dbdata:/var/lib/mysql
+      – db:/var/lib/mysql
 volumes:
-  dbdata:
+  db:
