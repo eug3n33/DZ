@@ -12,5 +12,15 @@ services:
       – "8514:8514"
     volumes:
       – db:/var/lib/mysql
+
+ mvn:
+    build: mvn_d
+    volumes:
+      - type: volume
+        source: webapps
+        target: /tmp/webapps
+
+volumes:
+  webapps:
 volumes:
   db:
