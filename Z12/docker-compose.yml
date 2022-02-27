@@ -30,7 +30,7 @@ services:
     volumes:
       - type: volume
         source: webapps
-        target: /tmp/webapps
+        target: /usr/local/tomcat/webapps/App42PaaS-Java-MySQL-Sample-0.0.1-SNAPSHOT.war
 
 volumes:
   webapps:
