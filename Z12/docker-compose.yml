@@ -24,7 +24,7 @@ services:
         target: /tmp/webapps
 
   web:
-    image: tomcat
+    image: tomcat:9
     ports:
       - '8080:8080'
     volumes:
