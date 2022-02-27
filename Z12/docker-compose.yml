@@ -1,5 +1,5 @@
 ---
-version: '3.3'
+version: '3'
 services:
   db: # база
     image: mysql:5.7
@@ -10,9 +10,9 @@ services:
       MYSQL_USER: test1
       MYSQL_PASSWORD: QQww1122
     ports:
-      – "8514:8514"
+      - "8515:8514"
     volumes:
-      – db: /var/lib/mysql
+      - db: /var/lib/mysql
 
   mvn:
     build: mvn_d
@@ -31,5 +31,3 @@ services:
 volumes:
   webapps:
     external: true
-volumes:
-  db:
