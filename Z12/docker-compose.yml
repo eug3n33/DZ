@@ -14,18 +14,18 @@ services:
     volumes:
       – db: /var/lib/mysql
 
- mvn:
+  mvn:
     build: mvn_d
     volumes:
       - ./Config.propertie: /tmp/App42PaaS-Java-MySQL-Sample/WebContent/Config.properties
     volumes:
       webapps: /tmp/webapps
 
- web:
-   image: tomcat
-   ports:
+  web:
+    image: tomcat
+    ports:
       - '8080:8080'
-   volumes:
+    volumes:
      - webapps: /tmp/webapps
 
 volumes:
