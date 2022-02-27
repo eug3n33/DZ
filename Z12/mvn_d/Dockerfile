@@ -1,6 +1,8 @@
-FROM maven:3.5.2-jdk-8
-RUN apt update
-RUN apt-get install -y git
+FROM ubuntu:20.04
+ENV TZ=Europe/Moscow
+RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
+RUN apt-get update
+RUN apt install -y maven git
 WORKDIR /tmp
 RUN git clone https://github.com/shephertz/App42PaaS-Java-MySQL-Sample.git
 RUN git clone https://github.com/eug3n33/DZ.git
