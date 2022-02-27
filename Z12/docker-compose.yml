@@ -16,19 +16,17 @@ services:
  mvn: # сборка
     build: mvn_d
     volumes:
-      - type: volume
-        source: webapps
-        target: /tmp/webapps
+        webapps: /tmp/webapps
 
  web:
    image: tomcat
    ports:
       - '8080:8080'
-   volumes_from:
-     -mvn
-     -db
+   volumes:
+     - webapps: /tmp/webapps
 
 volumes:
   webapps:
+    external: true
 volumes:
   db:
