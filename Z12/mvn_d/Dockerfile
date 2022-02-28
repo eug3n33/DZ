@@ -12,4 +12,4 @@ RUN mvn clean
 RUN mvn install
 RUN mkdir /tmp/webapps
 RUN cp /tmp/App42PaaS-Java-MySQL-Sample/target/App42PaaS-Java-MySQL-Sample-0.0.1-SNAPSHOT.war /tmp/webapps
-RUN cp /tmp/DZ/Z12/Config.properties /tmp/webapps
+RUN cp /tmp/DZ/Z12/Config.properties /tmp/webapps/Config.properties
