@@ -30,7 +30,7 @@ services:
     volumes:
       - type: volume
         source: webapps
-        target: /tmp/webapps
+        target: /usr/local/tomcat/webapps
 
 volumes:
   webapps:
