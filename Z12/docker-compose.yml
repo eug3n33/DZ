@@ -10,7 +10,7 @@ services:
       MYSQL_USER: test1
       MYSQL_PASSWORD: QQww1122
     ports:
-      - '8515:8514'
+      - '8514:8514'
     volumes:
       - type: volume
         source: db
