@@ -21,7 +21,7 @@
 
   - name: Create an EC2 key
     ec2_key:
-      name: "{{ keypair }}"
+      name: mykey2
       region: "{{ region }}"
     register: ec2_key
 
