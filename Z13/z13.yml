@@ -49,3 +49,21 @@
           Name: runbuild
       count: 1
     register: ec2
+
+  - name: Create instance 2
+    ec2:
+      key_name: "{{ keypair }}"
+      group: "{{ security_group }}"
+      region: "{{ region }}"
+      instance_type: "{{ instance_type }}"
+      image: "{{ image }}"
+      wait: yes
+      wait_timeout: 500
+      volumes:
+        - device_name: /dev/sdh
+          volume_size: 15
+      instance_tags:
+          Environment: Test
+          Name: runbuild
+      count: 1
+    register: ec2
