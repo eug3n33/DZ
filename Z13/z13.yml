@@ -26,10 +26,7 @@
     register: ec2_key
 
   - name: Save private key
-    copy:
-      content: "{{ ec2_key.key.private_key }}"
-      dest: "../my-key2.pem"
-      mode: 0600
+    copy: content= "{{ ec2_key.key.private_key }}" dest=".ssh/my-key2.pem" mode= 0600
     when: ec2_key.changed
 
   - name: Create instance 1
