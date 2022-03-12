@@ -21,7 +21,7 @@
 
   - name: Create an EC2 key
     ec2_key:
-      name: mykey2
+      name: "{{ keypair }}"
       region: "{{ region }}"
     register: ec2_key
 
@@ -29,7 +29,7 @@
     copy:
       content: "{{ ec2_key.key.private_key }}"
       dest: "../my-key2.pem"
-      mode: 600
+      mode: 0600
     when: ec2_key.changed
 
   - name: Create instance 1
