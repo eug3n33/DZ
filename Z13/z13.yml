@@ -43,9 +43,6 @@
       volumes:
         - device_name: /dev/sdh
           volume_size: 15
-      instance_tags:
-          Environment: Test
-          Name: runbuild
       count: 1
     register: ec2
 
@@ -60,8 +57,5 @@
       volumes:
         - device_name: /dev/sdh
           volume_size: 15
-      instance_tags:
-          Environment: Test
-          Name: runbuild
       count: 1
     register: ec2
