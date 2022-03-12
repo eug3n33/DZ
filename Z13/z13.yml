@@ -29,7 +29,7 @@
     copy:
       content: "{{ ec2_key.key.private_key }}"
       dest: "../my-key2.pem"
-      mode: 0600
+      mode: 600
     when: ec2_key.changed
 
   - name: Create instance 1
