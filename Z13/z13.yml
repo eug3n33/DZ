@@ -48,8 +48,7 @@
 
   - name: add ec2 instance to hosts
     add_host:
-      hostname: "{{ item.public_ip }}"
-      ansible_private_key_file: ~/.ssh/id_rsa
+      hostname: "{{ public_ip_address }}"
       groupname: bild
       region: "{{ region }}"
     loop: "{{ ec2.instances }}"
