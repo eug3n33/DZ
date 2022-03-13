@@ -39,8 +39,6 @@
       region: "{{ region }}"
       instance_type: "{{ instance_type }}"
       image: "{{ image }}"
-      network:
-        assign_public_ip: true
       wait: yes
       volumes:
         - device_name: /dev/sdh
