@@ -52,14 +52,14 @@
         - device_name: /dev/sdh
           volume_size: 15
       count: 1
-    register: ec2
+    register: ec3
 
-  - name: add ec2 instance to hosts2
+  - name: add ec3 instance to hosts2
     add_host:
       hostname: "{{ item.public_ip }}"
       groupname: web
       ansible_private_key_file: ~/.ssh/my-key.pem
-    loop: "{{ ec2.instances }}"
+    loop: "{{ ec3.instances }}"
 
 - name: install mvn
   hosts: mvn
