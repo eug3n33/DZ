@@ -49,6 +49,6 @@
   - name: add ec2 instance to hosts
     add_host:
       hostname: " {{ item.private_ip }} "
-      groupname: bild
+      groupname: bild    #groups:
       region: "{{ region }}"
     loop: "{{ ec2.instances }}"
