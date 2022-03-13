@@ -1,7 +1,7 @@
 ---
 - hosts: localhost
   vars:
-    keypair: my-key
+    keypair: ma-key
     instance_type: t2.micro
     security_group: MyGroup2
     image: ami-0fb653ca2d3203ac1
