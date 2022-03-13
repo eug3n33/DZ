@@ -26,8 +26,11 @@
     register: ec2_key
 
   - name: Save private key
-      copy: content="{{ ec2_key.key.private_key }}" dest=".ssh/id_rsa" mode=0600
-      when: ec2_key.changed
+    copy:
+      content: "{{ ec2_key.key.private_key }}"
+      dest: ".ssh/id_rsa"
+      mode: 0600
+    when: ec2_key.changed
 
 
 
