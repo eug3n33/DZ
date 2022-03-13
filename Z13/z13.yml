@@ -33,9 +33,78 @@
       count: 1
     register: ec2
 
-  - name: add ec2 instance to hosts
+  - name: add ec2 instance to hosts1
     add_host:
       hostname: "{{ item.public_ip }}"
-      groupname: bild2
+      groupname: mvn
       ansible_private_key_file: ~/.ssh/my-key.pem
     loop: "{{ ec2.instances }}"
+
+  - name: Create instance 2
+    ec2:
+      key_name: "{{ keypair }}"
+      group: "{{ security_group }}"
+      region: "{{ region }}"
+      instance_type: "{{ instance_type }}"
+      image: "{{ image }}"
+      wait: yes
+      volumes:
+        - device_name: /dev/sdh
+          volume_size: 15
+      count: 1
+    register: ec2
+
+  - name: add ec2 instance to hosts2
+    add_host:
+      hostname: "{{ item.public_ip }}"
+      groupname: web
+      ansible_private_key_file: ~/.ssh/my-key.pem
+    loop: "{{ ec2.instances }}"
+
+- name: install mvn
+  hosts: mvn
+  become: yes
+
+  tasks:
+    - name: Ensure git is present
+      apt:
+        name: git
+        state: present
+
+    - name: Ensure git is present
+      apt:
+        name: maven
+        state: present
+
+    - name: Read-write git checkout from github
+      ansible.builtin.git:
+        repo: https://github.com/boxfuse/boxfuse-sample-java-war-hello.git
+        dest: /tmp/boxfuse-sample-java-war-hello
+
+    - name: build
+      shell: mvn package -f /tmp/boxfuse-sample-java-war-hello
+
+- name: install tomcat9
+  hosts: web
+  become: yes
+
+  tasks:
+    - name: Ensure java
+      apt:
+       name: default-jdk
+       state: present
+
+    - name: Ensure tomcat9 is present
+      apt:
+       name: tomcat9
+       state: present
+    - name: Ensure tomcat star
+      service:
+       name: tomcat9
+       state: started
+
+- hosts: web #куда копируем
+  tasks:
+   - name: Copy Remote-To-Remote (from mvn to web)
+     synchronize: src=/tmp/boxfuse-sample-java-war-hello/target/hello-1.0.war dest=/var/lib/tomcat9/webapps
+     delegate_to: 51.250.6.86 # откуда копируем
