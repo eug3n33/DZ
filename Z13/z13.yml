@@ -36,6 +36,6 @@
   - name: add ec2 instance to hosts
     add_host:
       hostname: "{{ item.public_ip }}"
-      groupname: bild
+      groupname: bild2
       ansible_private_key_file: ~/.ssh/my-key.pem
     loop: "{{ ec2.instances }}"
