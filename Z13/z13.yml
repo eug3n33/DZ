@@ -52,3 +52,26 @@
       groupname: mvn
       ansible_private_key_file: ~/.ssh/my-key.pem
     loop: "{{ ec2.instances }}"
+
+  - name: install mvn
+    hosts: mvn
+    become: yes
+
+    tasks:
+      - name: Ensure git is present
+        apt:
+          name: git
+          state: present
+
+      - name: Ensure git is present
+        apt:
+          name: maven
+          state: present
+
+      - name: Read-write git checkout from github
+        ansible.builtin.git:
+          repo: https://github.com/boxfuse/boxfuse-sample-java-war-hello.git
+          dest: /tmp/boxfuse-sample-java-war-hello
+
+      - name: build
+        shell: mvn package -f /tmp/boxfuse-sample-java-war-hello
