@@ -20,9 +20,9 @@
           cidr_ip: 0.0.0.0/0
 
   - name: Create an EC2 key
-      ec2_key:
-        name: "{{ keypair }}"
-        region: "{{ region }}"
+    ec2_key:
+      name: "{{ keypair }}"
+      region: "{{ region }}"
       register: ec2_key
 
   - name: Save private key
