@@ -48,8 +48,8 @@
 
   - name: add ec2 instance to hosts1
     add_host:
-      hostname: "{{ item.public_ip }}"
-      groupname: mvn
+      name: "{{ ec2.instances[0].public_ip }}"
+      groups: mvn
       ansible_private_key_file: ~/.ssh/my-key.pem
     loop: "{{ ec2.instances }}"
 
