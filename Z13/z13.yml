@@ -48,13 +48,15 @@
 
   - name: add ec2 instance to hosts1
     add_host:
-      name: "{{ ec2.instances[0].public_ip }}"
-      groups: mvn
+      hostname: "{{ item.public_ip }}"
+      groupname: mvn
       ansible_private_key_file: ~/.ssh/my-key.pem
     loop: "{{ ec2.instances }}"
 
 - name: install mvn
   hosts: mvn
+  remote_user: ubuntu
+  become_user: root
   become: yes
 
   tasks:
