@@ -55,8 +55,6 @@
 
 - name: install mvn
   hosts: mvn
-  remote_user: ubuntu
-  become_user: root
   become: yes
 
   tasks:
