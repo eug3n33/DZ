@@ -28,7 +28,7 @@
   - name: Save private key
     copy:
       content: "{{ ec2_key.key.private_key }}"
-      dest: "{{ ansible_env.HOME }}/.ssh/key1-test.pem"
+      dest: "{{ ansible_env.HOME }}/.ssh/key2-test.pem"
       mode: 0600
     when: ec2_key.changed
 
