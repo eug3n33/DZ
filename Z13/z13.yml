@@ -26,7 +26,7 @@
       register: ec2_key
 
   - name: Save private key
-      copy:
+    copy:
       content: "{{ ec2_key.key.private_key }}"
       dest: "{{ ansible_env.HOME }}/.ssh/key1-test.pem"
       mode: 0600
