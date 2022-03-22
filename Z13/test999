@@ -1,0 +1,342 @@
+stages:
+  - build
+  - integration
+  - package
+  - test
+  - deploy
+
+services:
+  - name: docker:dind
+    command: [ "--insecure-registry=gitlab.mai.ru:5050" ]
+
+variables:
+  DOCKER_DRIVER: overlay2
+  DOCKER_TLS_CERTDIR: ""
+  PIP_CACHE_DIR: "$CI_PROJECT_DIR/.cache/pip"
+
+Install dependencies:
+  stage: build
+  image: python:3.9.5-buster
+  cache:
+    key: ${CI_COMMIT_REF_SLUG}
+    paths:
+      - .cache/pip
+    policy: pull-push
+  script:
+    - cd web
+    - pip3 install poetry
+    - poetry config virtualenvs.in-project true
+    - poetry install -vv
+
+
+Unit Testing Backend Application:
+  stage: integration
+  image: python:3.9.5-buster
+  needs:
+    - Install dependencies
+  cache:
+    key: ${CI_COMMIT_REF_SLUG}
+    paths:
+      - .cache/pip
+    policy: pull
+  variables:
+    SECRET_KEY: sikret
+  script:
+    - cd web
+    - pip3 install poetry
+    - poetry config virtualenvs.in-project true
+    - poetry install -vv
+    - poetry run pytest apps
+
+
+Static Security Check Backend Application:
+  stage: integration
+  image: python:3.9.5-buster
+  needs:
+    - Install dependencies
+  cache:
+    key: ${CI_COMMIT_REF_SLUG}
+    paths:
+      - .cache/pip
+    policy: pull
+  variables:
+    SECRET_KEY: sikret
+  script:
+    - cd web
+    - pip3 install poetry
+    - poetry config virtualenvs.in-project true
+    - poetry install -vv
+    - poetry run black apps
+
+
+Linting Backend Application:
+  stage: integration
+  image: python:3.9.5-buster
+  needs:
+    - Install dependencies
+  cache:
+    key: ${CI_COMMIT_REF_SLUG}
+    paths:
+      - .cache/pip
+    policy: pull
+  variables:
+    SECRET_KEY: sikret
+  script:
+    - cd web
+    - pip3 install poetry
+    - poetry config virtualenvs.in-project true
+    - poetry install -vv
+    - poetry run pylint apps --fail-under=5.0
+
+Formatting Backend Application:
+  stage: integration
+  image: python:3.9.5-buster
+  needs:
+    - Install dependencies
+  cache:
+    key: ${CI_COMMIT_REF_SLUG}
+    paths:
+      - .cache/pip
+    policy: pull
+  variables:
+    SECRET_KEY: sikret
+  script:
+    - cd web
+    - pip3 install poetry
+    - poetry config virtualenvs.in-project true
+    - poetry install -vv
+    - poetry run black --check apps
+
+Formatting Applicant UI:
+  stage: integration
+  image: node:alpine
+  needs: [ ]
+  script:
+    - cd ui/applicant
+    - yarn install
+    - yarn run prettier --check src
+
+
+Formatting Moderator UI:
+  stage: integration
+  image: node:alpine
+  needs: [ ]
+  script:
+    - cd ui/moderator
+    - yarn install
+    - yarn run prettier --check src
+
+
+Build Backend:
+  stage: package
+  image: docker/compose
+  needs:
+    - Formatting Backend Application
+    - Linting Backend Application
+    - Unit Testing Backend Application
+    - Static Security Check Backend Application
+  before_script:
+    - echo -n $CI_JOB_TOKEN | docker login -u gitlab-ci-token --password-stdin gitlab.mai.ru:5050
+    - cp ./environments/.env.ci .env
+  variables:
+    IMAGE_BACKEND: $CI_REGISTRY_IMAGE/backend:$CI_COMMIT_SHA
+  after_script:
+    - docker logout gitlab.mai.ru:5050
+  script:
+    - docker pull $CI_REGISTRY_IMAGE/backend || true
+    - sh ./build.sh backend
+    - docker push $CI_REGISTRY_IMAGE/backend:$CI_COMMIT_SHA
+
+
+Build UI:
+  stage: package
+  image: docker/compose
+  needs:
+    - Formatting Applicant UI
+    - Formatting Moderator UI
+  before_script:
+    - echo -n $CI_JOB_TOKEN | docker login -u gitlab-ci-token --password-stdin gitlab.mai.ru:5050
+    - cp ./environments/.env.ci .env
+  variables:
+    IMAGE_WEBSERVER: $CI_REGISTRY_IMAGE/webserver:$CI_COMMIT_SHA
+  after_script:
+    - docker logout gitlab.mai.ru:5050
+  script:
+    - docker pull $CI_REGISTRY_IMAGE/webserver || true
+    - sh ./build.sh webserver
+    - docker push $CI_REGISTRY_IMAGE/webserver:$CI_COMMIT_SHA
+
+
+Build Database:
+  stage: package
+  image: docker/compose
+  needs: [ ]
+  before_script:
+    - echo -n $CI_JOB_TOKEN | docker login -u gitlab-ci-token --password-stdin gitlab.mai.ru:5050
+    - cp ./environments/.env.ci .env
+  variables:
+    IMAGE_DATABASE: $CI_REGISTRY_IMAGE/postgres:$CI_COMMIT_SHA
+  after_script:
+    - docker logout gitlab.mai.ru:5050
+  script:
+    - docker pull $CI_REGISTRY_IMAGE/postgres || true
+    - sh ./build.sh postgres
+    - docker push $CI_REGISTRY_IMAGE/postgres:$CI_COMMIT_SHA
+
+
+Build Mailer:
+  stage: package
+  image: docker
+  needs: [ ]
+  before_script:
+    - echo -n $CI_JOB_TOKEN | docker login -u gitlab-ci-token --password-stdin gitlab.mai.ru:5050
+    - cp ./environments/.env.ci .env
+  variables:
+    IMAGE_MAILER: $CI_REGISTRY_IMAGE/mailer:$CI_COMMIT_SHA
+  after_script:
+    - docker logout gitlab.mai.ru:5050
+  script:
+    - docker pull $CI_REGISTRY_IMAGE/mailer || true
+    - sh ./build.sh mailer
+    - docker push $CI_REGISTRY_IMAGE/mailer:$CI_COMMIT_SHA
+
+Build Functional Testing Container:
+  stage: package
+  image: docker
+  needs: [ ]
+  before_script:
+    - echo -n $CI_JOB_TOKEN | docker login -u gitlab-ci-token --password-stdin gitlab.mai.ru:5050
+    - cp ./environments/.env.ci .env
+  variables:
+    IMAGE_TESTS: $CI_REGISTRY_IMAGE/tests:$CI_COMMIT_SHA
+  after_script:
+    - docker logout gitlab.mai.ru:5050
+  script:
+    - docker pull $CI_REGISTRY_IMAGE/tests || true
+    - sh ./build.sh tests
+    - docker push $CI_REGISTRY_IMAGE/tests:$CI_COMMIT_SHA
+
+Build Filebeat Container:
+  stage: package
+  image: docker
+  needs: [ ]
+  before_script:
+    - echo -n $CI_JOB_TOKEN | docker login -u gitlab-ci-token --password-stdin gitlab.mai.ru:5050
+    - cp ./environments/.env.ci .env
+  variables:
+    IMAGE_FILEBEAT: $CI_REGISTRY_IMAGE/filebeat:$CI_COMMIT_SHA
+  after_script:
+    - docker logout gitlab.mai.ru:5050
+  script:
+    - docker pull $CI_REGISTRY_IMAGE/filebeat || true
+    - sh ./build.sh filebeat
+    - docker push $CI_REGISTRY_IMAGE/filebeat:$CI_COMMIT_SHA
+
+Functional Testing:
+  stage: test
+  image: docker/compose
+  needs:
+    - Build Backend
+    - Build Database
+    - Build UI
+    - Build Mailer
+    - Build Functional Testing Container
+    - Build Filebeat Container
+  before_script:
+    - cp environments/.env.production .env
+    - echo -n $CI_JOB_TOKEN | docker login -u gitlab-ci-token --password-stdin gitlab.mai.ru:5050
+  environment:
+    name: production
+  variables:
+    DJANGO_ENVIRONMENT: production
+    SECRET_KEY: sikret
+    DOCKER_DRIVER: overlay2
+    DOCKER_TLS_CERTDIR: ""
+  script:
+    - cp ./environments/.env.ci .env
+    - echo "IMAGE_BACKEND=${CI_REGISTRY_IMAGE}/backend:${CI_COMMIT_SHA}" >> .env
+    - echo "IMAGE_WEBSERVER=${CI_REGISTRY_IMAGE}/webserver:${CI_COMMIT_SHA}" >> .env
+    - echo "IMAGE_DATABASE=${CI_REGISTRY_IMAGE}/postgres:${CI_COMMIT_SHA}" >> .env
+    - echo "IMAGE_MAILER=${CI_REGISTRY_IMAGE}/mailer:${CI_COMMIT_SHA}" >> .env
+    - echo "IMAGE_TESTS=${CI_REGISTRY_IMAGE}/tests:${CI_COMMIT_SHA}" >> .env
+    - docker-compose pull || true
+    # ensure no containers are run
+    - >
+      docker-compose
+      -f docker-compose.yml
+      -f docker-compose.test.yml
+      down
+      -v
+    - >
+      docker-compose
+      -f docker-compose.yml
+      -f docker-compose.test.yml
+      up
+      --abort-on-container-exit
+      --exit-code-from
+      accept
+  after_script:
+    - docker logout gitlab.mai.ru:5050
+
+
+Deploy to Production Clone:
+  stage: deploy
+  image: gitlab/dind
+  needs:
+    - Functional Testing
+  environment:
+    name: production
+  only:
+    - "lk_clone"
+  before_script:
+    - mkdir -p ~/.ssh
+    - echo "$DEPLOY_SERVER_CLONE_SSH_PRIVATE_KEY" > ~/.ssh/id_rsa
+    - chmod 600 ~/.ssh/id_rsa
+    - eval "$(ssh-agent -s)"
+    - ssh-add ~/.ssh/id_rsa
+    - ssh-keyscan -H $DEPLOYMENT_SERVER_CLONE >> ~/.ssh/known_hosts
+  script:
+    - cp environments/.env.production .env
+    - echo "SECRET_KEY=${SECRET_KEY}" >> .env
+    - echo "DB_USER=${DB_USER}" >> .env
+    - echo "DB_PASSWORD=${DB_PASSWORD}" >> .env
+    - echo "DB_NAME=${DB_NAME}" >> .env
+    - echo "DB_HOST=postgres" >> .env
+    - echo "DB_PORT=5432" >> .env
+    - echo "POSTGRES_USER=${DB_USER}" >> .env
+    - echo "POSTGRES_PASSWORD=${DB_PASSWORD}" >> .env
+    - echo "POSTGRES_DB=${DB_NAME}" >> .env
+    - echo "EMAIL_HOST=${EMAIL_HOST}" >> .env
+    - echo "EMAIL_PORT=${EMAIL_PORT}" >> .env
+    - echo "EMAIL_USER=${EMAIL_USER}" >> .env
+    - echo "EMAIL_PASSWORD=${EMAIL_PASSWORD}" >> .env
+    - echo "EMAIL_USE_TLS=${EMAIL_USE_TLS}" >> .env
+    - echo "ELK_VERSION=${ELK_VERSION}" >> .env
+    - echo "ELK_USER=elastic" >> .env
+    - echo "ELK_PASSWORD=${ELK_PASSWORD}" >> .env
+    - echo "LOGSTASH_PORT=${LOGSTASH_PORT}" >> .env
+    - echo "ELASTIC_PORT=${ELASTICSEARCH_PORT}" >> .env
+    - echo "KIBANA_PORT=${KIBANA_PORT}" >> .env
+    - echo "ODATA_PROTOCOL=${ODATA_PROTOCOL}" >> .env
+    - echo "ODATA_HOST=${ODATA_HOST_CLONE}" >> .env
+    - echo "ODATA_PORT=${ODATA_PORT_CLONE}" >> .env
+    - echo "ODATA_INFOBASE=${ODATA_INFOBASE_CLONE}" >> .env
+    - echo "ODATA_USER=${ODATA_USER}" >> .env
+    - echo "ODATA_PASSWORD=${ODATA_PASSWORD}" >> .env
+    - echo "WSDL_URL=${WSDL_URL}" >> .env
+    - echo "WSDL_USER=${WSDL_USER}" >> .env
+    - echo "WSDL_PASSWORD=${WSDL_PASSWORD}" >> .env
+    - echo "PGADMIN_DEFAULT_EMAIL=${PGADMIN_DEFAULT_EMAIL}" >> .env
+    - echo "PGADMIN_DEFAULT_PASSWORD=${PGADMIN_DEFAULT_PASSWORD}" >> .env
+    - echo "IMAGE_BACKEND=${CI_REGISTRY_IMAGE}/backend:${CI_COMMIT_SHA}" >> .env
+    - echo "IMAGE_WEBSERVER=${CI_REGISTRY_IMAGE}/webserver:${CI_COMMIT_SHA}" >> .env
+    - echo "IMAGE_DATABASE=${CI_REGISTRY_IMAGE}/postgres:${CI_COMMIT_SHA}" >> .env
+    - echo "IMAGE_MAILER=${CI_REGISTRY_IMAGE}/mailer:${CI_COMMIT_SHA}" >> .env
+    - echo "IMAGE_FILEBEAT=${CI_REGISTRY_IMAGE}/filebeat:${CI_COMMIT_SHA}" >> .env
+    - scp ./.env deploy_user@${DEPLOYMENT_SERVER_CLONE}:~/lk-abit/
+    - scp ./docker-compose.clone.yml deploy_user@${DEPLOYMENT_SERVER_CLONE}:~/lk-abit/docker-compose.clone.yml
+    - scp ./docker-compose.elk.yml deploy_user@${DEPLOYMENT_SERVER_CLONE}:~/lk-abit/docker-compose.elk.yml
+    - >
+      ssh deploy_user@$DEPLOYMENT_SERVER_CLONE "cd lk-abit; echo -n ${REGISTRY_TOKEN} | docker login -u gitlab-ci-token --password-stdin gitlab.mai.ru:5050;
+      docker-compose -f docker-compose.clone.yml stop; docker-compose -f docker-compose.clone.yml pull; docker-compose -f docker-compose.clone.yml up -d
+      "

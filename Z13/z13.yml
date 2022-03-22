@@ -12,7 +12,7 @@
     ec2_group:
       name: "{{ security_group }}"
       description: allow 22 port
-      region: "{{ region }}"
+      region: "{{ region }}"f
       rules:
         - proto: tcp
           from_port: 22
